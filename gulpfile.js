@@ -102,15 +102,37 @@
 // }
 
 // ------------文件监听 watch
-const { src, dest, watch } = require('gulp')
+// const { src, dest, watch } = require('gulp')
 
-const fileStream = () => {
-  return src('./src/index.js')
-    .pipe(dest('./dist'))
-}
+// const fileStream = () => {
+//   return src('./src/index.js')
+//     .pipe(dest('./dist'))
+// }
 
-watch('./src/**/*.js', fileStream)
+// watch('./src/**/*.js', fileStream)
 
-module.exports = {
-  fileStream
-}
+// module.exports = {
+//   fileStream
+// }
+
+// 使用 gulp-babel 转换成浏览器兼容代码，使用 terser 压缩代码
+// const { src, dest } = require('gulp')
+// const gulpBabel = require('gulp-babel')
+// const gulpTerser = require('gulp-terser')
+
+// const jsTask = () => {
+//   return src('./src/**/*.js')
+//     .pipe(gulpBabel({ presets: ['@babel/preset-env'] }))
+//     .pipe(gulpTerser())
+//     .pipe(dest('./dist'))
+// }
+
+// module.exports = {
+//   jsTask
+// }
+
+
+//----------------------- 案例
+const { src, dest, series, parallel, watch } = require('gulp')
+const gulpBabel = require('gulp-babel')
+const gulpTerser = require('gulp-terser')

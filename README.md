@@ -254,3 +254,53 @@ module.exports = {
 
 ## gulp 使用插件处理各种任务
 
+gulp 也提供了很多插件，去处理不同的任务，需要什么插件，可以在下面网站搜索找到
+
+https://gulpjs.com/plugins/
+
+
+
+### 对 js 进行处理
+
+常见的对 js 处理方法就是：babel 转换成浏览器支持的语法，terser 进行代码压缩等等
+
+安装对应插件：
+
+```js
+npm i @babel/core gulp-babel @babel/preset-env gulp-terser -D
+```
+
+使用：
+
+```js
+const { src, dest } = require('gulp')
+const gulpBabel = require('gulp-babel')
+const gulpTerser = require('gulp-terser')
+
+const jsTask = () => {
+  return src('./src/**/*.js')
+    .pipe(gulpBabel({ presets: ['@babel/preset-env'] }))
+    .pipe(gulpTerser())
+    .pipe(dest('./dist'))
+}
+
+module.exports = {
+  jsTask
+}
+```
+
+
+
+### 案例
+
+主要集成以下功能：
+
+- 处理 html
+- 处理 js
+- 处理 less
+- 处理图片
+- 将资源注入 html
+- 删除生成目录
+- 开发环境本地服务
+- 生产环境打包
+
