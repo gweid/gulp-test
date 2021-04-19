@@ -61,30 +61,56 @@
 // }
 
 // ------------series() 和 parallel() 结合
-const { series, parallel } = require('gulp')
+// const { series, parallel } = require('gulp')
 
-const task1 = cb => {
-  console.log('task-1')
-  cb()
-}
-const task2 = cb => {
-  console.log('task-2')
-  cb()
-}
-const task3 = cb => {
-  console.log('task-3')
-  cb()
-}
-const task4 = cb => {
-  console.log('task-3')
-  cb()
+// const task1 = cb => {
+//   console.log('task-1')
+//   cb()
+// }
+// const task2 = cb => {
+//   console.log('task-2')
+//   cb()
+// }
+// const task3 = cb => {
+//   console.log('task-3')
+//   cb()
+// }
+// const task4 = cb => {
+//   console.log('task-3')
+//   cb()
+// }
+
+// const seriesTask = series(task1, task2)
+// const parallelTask = parallel(task3, task4)
+
+// const composeTask = series(seriesTask, parallelTask)
+
+// module.exports = {
+//   composeTask
+// }
+
+// ------------文件流读写
+// const { src, dest } = require('gulp')
+
+// const fileStream = () => {
+//   return src('./src/index.js')
+//     .pipe(dest('./dist'))
+// }
+
+// module.exports = {
+//   fileStream
+// }
+
+// ------------文件监听 watch
+const { src, dest, watch } = require('gulp')
+
+const fileStream = () => {
+  return src('./src/index.js')
+    .pipe(dest('./dist'))
 }
 
-const seriesTask = series(task1, task2)
-const parallelTask = parallel(task3, task4)
-
-const composeTask = series(seriesTask, parallelTask)
+watch('./src/**/*.js', fileStream)
 
 module.exports = {
-  composeTask
+  fileStream
 }

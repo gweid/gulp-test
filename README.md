@@ -196,3 +196,61 @@ module.exports = {
 
 
 
+### 文件流读写
+
+gulp 提供了文件读写的方法：
+
+- src：接受参数，并从文件系统中读取文件然后生成一个Node流（Stream），它将所有匹配的文件读取到内 
+
+  存中并通过流（Stream）进行处理
+
+  - 参数：接受一个 glob 字符串或由多个 glob 字符串组成的数组作为参数，用于确定哪些文件需要被操作，需要注意的是glob 或 glob 数组必须至少匹配到一个匹配项，否则 src() 将报错
+  - glob 的匹配规则：
+    - (一个星号*)：在一个字符串中，匹配任意数量的字符，包括零个匹配；例如：（\*.js）
+    - (两个星号**)：在多个字符串匹配中匹配任意数量的字符串，通常用在匹配目录下的文件（src/\*\*/\*.js）
+    - (取反 ! )：例如：['src/**/*.js', '!src/commin/*.js']
+
+- dest：接受输出目录作为参数，并且它还会产生一个 Node流(stream)，通过该流将内容输出到文件中
+
+- 流（stream）所提供的主要的 API 是 .pipe() 方法，pipe 方法接受一个 转换流（Transform streams）或可写流（Writable streams），那么转换流或者可写流，拿到数据之后可以对数据进行处理，再次传递给下一个转换流或者可写流
+
+例子：从 src 目录中读取 index.js 文件，后放到 dist 目录
+
+```js
+const { src, dest } = require('gulp')
+
+const fileStream = () => {
+  return src('./src/index.js')
+    .pipe(dest('./dist'))
+}
+
+module.exports = {
+  fileStream
+}
+```
+
+
+
+### 文件监听
+
+gulp 提供了 watch 这个 api 进行文件的监控，可以利用 watch 监听文件变化，然后重新进行 gulp 任务流
+
+```js
+const { src, dest, watch } = require('gulp')
+
+const fileStream = () => {
+  return src('./src/index.js')
+    .pipe(dest('./dist'))
+}
+
+watch('./src/**/*.js', fileStream)
+
+module.exports = {
+  fileStream
+}
+```
+
+
+
+## gulp 使用插件处理各种任务
+
