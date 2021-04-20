@@ -2,6 +2,4 @@ const formatFullName = (first, last) => {
   return first + last
 }
 
-exports = {
-  formatFullName
-}
+console.log(formatFullName('张', '三'))

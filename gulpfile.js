@@ -142,6 +142,8 @@ const gulpPostcss = require('gulp-postcss')
 const postcssPresetEnv = require('postcss-preset-env')
 const gulpMinifyCss = require('gulp-minify-css')
 const gulpImagemin = require('gulp-imagemin')
+const gulpInject = require('gulp-inject')
+const browserSync = require('browser-sync')
 
 const del = require('del')
 
@@ -174,9 +176,18 @@ const lessTask = () => {
 }
 
 // 处理图片任务
-const imgTask = () => {
-  return src('./src/assets/**', { base: './src' })
-    .pipe(gulpImagemin())
+// const imgTask = () => {
+//   return src('./src/assets/**', { base: './src' })
+//     .pipe(gulpImagemin())
+//     .pipe(dest('./dist'))
+// }
+
+// 将资源注入到 html，在 html 文件中需要写入魔法注释，让其知道注入到 html 哪里
+// 此时需要读取 dist 目录下的
+const injectTask = () => {
+  return src('./dist/*.html')
+    // { relative: true } 代表使用相对路径
+    .pipe(gulpInject(src(['./dist/**/*.{js,css}']), { relative: true }))
     .pipe(dest('./dist'))
 }
 
@@ -185,10 +196,31 @@ const cleanTask = () => {
   return del(['dist'])
 }
 
+// 搭建本地服务
+const bs = browserSync.create()
+const serveTask = () => {
+  // 文件发生变化，重新打包
+  watch('./src/*.html', series(htmlTask, injectTask))
+  watch('./src/*.js', series(jsTask, injectTask))
+  watch('./src/style/*.less', series(lessTask, injectTask))
+
+  bs.init({
+    port: 9000, // 监听端口
+    open: true, // 自动打开浏览器
+    files: './dist/*', // 监听哪些文件
+    server: {
+      baseDir: './dist'
+    }
+  })
+}
+
+// 生产环境打包
+const buildTask = series(cleanTask, parallel(htmlTask, jsTask, lessTask), injectTask)
+
+// 开发环境打包
+const devTask = series(buildTask, serveTask)
+
 module.exports = {
-  htmlTask,
-  jsTask,
-  lessTask,
-  imgTask,
-  cleanTask
+  devTask,
+  buildTask
 }

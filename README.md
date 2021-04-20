@@ -35,6 +35,7 @@ webpack 的核心理念是 module bundler（模块打包）
 ### gulp 相对于 webpack 的优缺点
 
 - gulp 是一个工具包，可以进行js，html，css，img 的压缩打包，可以将多个 js 文件或是 css 压缩成一个文件， 并且可以压缩为一行，以此来减少文件体积，加快请求速度和减少请求次数。它更适合编写一些自动化的任务，定义一系列的任务，让它逐一执行
+  - 例如，在项目里面，需要自动化把图片上传到 cdn，此时使用 gulp 就会比 webpack 好，webpack 使用插件上传过于依赖本身的生命周期的 hook，而上传图片其实完全用不到 webpack 编译，跟 webpack 关系不大
 - 但是 gulp 默认是不支持模块化的，目前对于大型项目（Vue、React、Angular）一般不会使用 gulp 来构建
 
 
@@ -209,7 +210,7 @@ gulp 提供了文件读写的方法：
     - (一个星号*)：在一个字符串中，匹配任意数量的字符，包括零个匹配；例如：（\*.js）
     - (两个星号**)：在多个字符串匹配中匹配任意数量的字符串，通常用在匹配目录下的文件（src/\*\*/\*.js）
     - (取反 ! )：例如：['src/\*\*/\*.js', '!src/commin/*.js']
-    - (匹配多个后缀)：例如：['src/\*\*/\*.{jpg,png,gif}']
+    - (匹配多个后缀)：例如：['src/\*\*/\*.{jpg,png,gif}']，注意 {jpg,png} 这里不要有空格
   - 参数2：一个配置，常用的比如：{ base: './src' }
     - base: 是指以什么为基础目录，比如这里配置了 { base: './src' }，那么在输出的时候只要配置 dest('./dist')，那么会根据文件在 src 目录的位置指定输出到dist目录的位置，比如 src/utils/tool.js 输出到 dist/utils/tools.js，而不需要配置成dest('dist/utils')
 
@@ -327,12 +328,18 @@ module.exports = {
   - gulp-imagemin 压缩图片
 
     ```js
-    npm i gulp-imagemin -D
+    cnpm i gulp-imagemin -D
     ```
 
-    注意：这里可能安装不上，可以使用 cnpm 安装
+    注意：**这里可能安装不上，可以使用 cnpm 安装**，可以使用 nrm 切换到 cnpm 安装
 
 - 将资源注入 html
+
+  - 使用 gulp-injecct 注入
+
+    ```js
+    npm i gulp-inject -D
+    ```
 
 - 删除目录
 
@@ -342,9 +349,42 @@ module.exports = {
     npm i del -D
     ```
 
-- 开发环境本地服务
+- 本地服务
+
+  - 使用 browser-sync 开启本地服务
+
+    ```js
+    npm i browser-sync -D
+    ```
+
+- 开发环境打包
+
+  ```js
+  const devTask = series(buildTask, serveTask)
+  ```
 
 - 生产环境打包
+
+  ```js
+  const buildTask = series(cleanTask, parallel(htmlTask, jsTask, lessTask), injectTask)
+  ```
+
+- 配置 package.json
+
+  ```js
+  {
+      "scripts": {
+          "dev": "gulp devTask",
+          "build": "gulp buildTask"
+       }
+  }
+  ```
+
+完整代码
+
+```js
+
+```
 
 
 
