@@ -200,15 +200,18 @@ module.exports = {
 
 gulp 提供了文件读写的方法：
 
-- src：接受参数，并从文件系统中读取文件然后生成一个Node流（Stream），它将所有匹配的文件读取到内 
+- src(path, options)：接受参数，并从文件系统中读取文件然后生成一个Node流（Stream），它将所有匹配的文件读取到内 
 
   存中并通过流（Stream）进行处理
 
-  - 参数：接受一个 glob 字符串或由多个 glob 字符串组成的数组作为参数，用于确定哪些文件需要被操作，需要注意的是glob 或 glob 数组必须至少匹配到一个匹配项，否则 src() 将报错
+  - 参数1：接受一个 glob 字符串或由多个 glob 字符串组成的数组作为参数，用于确定哪些文件需要被操作，需要注意的是glob 或 glob 数组必须至少匹配到一个匹配项，否则 src() 将报错
   - glob 的匹配规则：
     - (一个星号*)：在一个字符串中，匹配任意数量的字符，包括零个匹配；例如：（\*.js）
     - (两个星号**)：在多个字符串匹配中匹配任意数量的字符串，通常用在匹配目录下的文件（src/\*\*/\*.js）
-    - (取反 ! )：例如：['src/**/*.js', '!src/commin/*.js']
+    - (取反 ! )：例如：['src/\*\*/\*.js', '!src/commin/*.js']
+    - (匹配多个后缀)：例如：['src/\*\*/\*.{jpg,png,gif}']
+  - 参数2：一个配置，常用的比如：{ base: './src' }
+    - base: 是指以什么为基础目录，比如这里配置了 { base: './src' }，那么在输出的时候只要配置 dest('./dist')，那么会根据文件在 src 目录的位置指定输出到dist目录的位置，比如 src/utils/tool.js 输出到 dist/utils/tools.js，而不需要配置成dest('dist/utils')
 
 - dest：接受输出目录作为参数，并且它还会产生一个 Node流(stream)，通过该流将内容输出到文件中
 
@@ -296,11 +299,52 @@ module.exports = {
 主要集成以下功能：
 
 - 处理 html
-- 处理 js
+
+  - 使用 `gulp-htmlmin` 压缩 html
+
+    ```js
+    npm i gulp-htmlmin -D
+    ```
+
+- 处理 js 
+
+  - gulp-babel  转换 js、gulp-terser 压缩 js
+
+    ```js
+    npm i @babel/core gulp-babel @babel/preset-env gulp-terser -D
+    ```
+
 - 处理 less
-- 处理图片
+
+  - gulp-less 转换 less、gulp-postcss 加 css 前缀、gulp-minify-css 压缩css
+
+    ```js
+    npm i gulp-less postcss gulp-postcss postcss-preset-env gulp-minify-css -D
+    ```
+
+- 处理图片（gulp-imagemin）
+
+  - gulp-imagemin 压缩图片
+
+    ```js
+    npm i gulp-imagemin -D
+    ```
+
+    注意：这里可能安装不上，可以使用 cnpm 安装
+
 - 将资源注入 html
-- 删除生成目录
+
+- 删除目录
+
+  - del 删除目录：del 虽然不是 gulp 插件，但是 del 返回 promise，可以被 gulp 使用
+
+    ```js
+    npm i del -D
+    ```
+
 - 开发环境本地服务
+
 - 生产环境打包
+
+
 

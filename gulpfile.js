@@ -134,5 +134,61 @@
 
 //----------------------- 案例
 const { src, dest, series, parallel, watch } = require('gulp')
+const gulpHtmlmin = require('gulp-htmlmin')
 const gulpBabel = require('gulp-babel')
 const gulpTerser = require('gulp-terser')
+const gulpLess = require('gulp-less')
+const gulpPostcss = require('gulp-postcss')
+const postcssPresetEnv = require('postcss-preset-env')
+const gulpMinifyCss = require('gulp-minify-css')
+const gulpImagemin = require('gulp-imagemin')
+
+const del = require('del')
+
+// 处理 html 任务
+// src 中传入参数 { base: './src' } 代表以 src 为基础目录
+// 在输出的时候，会按照 src 下面的目录结构输出到指定的输出目录
+// 比如，src/utils/tool.js，在指定输出的时候，只需要制定 dest('./dist')
+// 最后会输出到 dist/utils/tools，跟 src 下的目录结构一一对应
+const htmlTask = () => {
+  return src('./src/**/*.html', { base: './src' })
+    .pipe(gulpHtmlmin({ collapseWhitespace: true }))
+    .pipe(dest('./dist'))
+}
+
+// 处理 js 任务
+const jsTask = () => {
+  return src('./src/**/*.js', { base: './src' })
+    .pipe(gulpBabel({ presets: ['@babel/preset-env'] }))
+    .pipe(gulpTerser())
+    .pipe(dest('./dist'))
+}
+
+// 处理 less 任务
+const lessTask = () => {
+  return src('./src/style/*.less', { base: './src' })
+    .pipe(gulpLess())
+    .pipe(gulpPostcss([postcssPresetEnv({ browsers: ['last 2 version'] })]))
+    .pipe(gulpMinifyCss())
+    .pipe(dest('./dist'))
+}
+
+// 处理图片任务
+const imgTask = () => {
+  return src('./src/assets/**', { base: './src' })
+    .pipe(gulpImagemin())
+    .pipe(dest('./dist'))
+}
+
+// 删除文件夹
+const cleanTask = () => {
+  return del(['dist'])
+}
+
+module.exports = {
+  htmlTask,
+  jsTask,
+  lessTask,
+  imgTask,
+  cleanTask
+}
